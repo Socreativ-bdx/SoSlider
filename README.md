@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/Version-v1.0-informational)
+![version](https://img.shields.io/badge/Version-v1.1-informational)
 
 # README #
 
@@ -47,6 +47,7 @@ const slider = new SoSlider(element, {
 | `nextArrow`       | `HTMLDivElement`  | `null`        | Node to use as next arrow |
 | `prevArrow`       | `HTMLDivElement`  | `null`        | Node to use as prev arrow |
 | `dotsClass`       | `String`          | `null`        | Class for dots elements   |
+| `arrowsClass`     | `String`          | `null`        | Class for arrows elements |
 | `arrowsColor`     | `String`          | `'#000'`      | Arrows colors             |
 | `dotsColor`       | `String`          | `'#000'`      | Dots colors               |
 

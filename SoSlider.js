@@ -1,3 +1,11 @@
+/**
+ * SoSlider
+ * Date: November 2021.
+ * Author: Sõcreativ'
+ * Version: v1.1
+ * Link: https://bitbucket.org/socreativ/soslider/src/master/
+ */
+
 class SoSlider{
 
     static #LIST = [];
@@ -12,22 +20,28 @@ class SoSlider{
 
     constructor(element, params = {}){
         this.element = element;
-        this.dots = params.dots || false;
-        this.arrows = params.arrows || false;
-        this.vertical = params.vertical || false;
-        this.autoplay = params.autoplay || false;
-        this.infinite = params.infinite || false;
-        this.speed = params.speed || 300;
-        this.autoplaySpeed = params.autoplaySpeed || 3000;
-        this.fade = params.fade || false;
-        this.draggable = params.draggable || false;
-        this.arrowsElement = params.arrowsElement || null;
-        this.dotsElement = params.dotsElement || null;
-        this.dotsColor = params.dotsColor || '#000';
-        this.arrowsColor = params.arrowsColor || '#000';
-        this.asNavFor = params.asNavFor || null;
+        this.dots = params.dots                     || false;
+        this.ease = params.ease                     || 'ease-in-out';
+        this.arrows = params.arrows                 || false;
+        this.vertical = params.vertical             || false;   // not implemented - Scheduled v2.0
+        this.autoplay = params.autoplay             || false;
+        this.infinite = params.infinite             || false;   // Scheduled improvement v1.4
+        this.speed = params.speed                   || 300;
+        this.pauseOnHover = params.pauseOnHover     || false;   // not implemented - Scheduled v1.2
+        this.autoplaySpeed = params.autoplaySpeed   || 3000;
+        this.fade = params.fade                     || false;
+        this.draggable = params.draggable           || false;   // not implemented - Scheduled v2.0
+        this.appendArrows = params.appendArrows     || null;    // not implemented - Scheduled v1.3
+        this.appendDots = params.appendDots         || null;    // not implemented - Scheduled v1.3
+        this.nextArrow = params.nextArrow           || null;    // not implemented - Schedlued v1.3
+        this.prevArrow = params.prevArrow           || null;    // not implemented - Scheduled v1.3
+        this.arrowsClass = params.arrowsClass       || null;
+        this.dotsClass = params.dotsClass           || null;
+        this.dotsColor = params.dotsColor           || '#000';
+        this.arrowsColor = params.arrowsColor       || '#000';
+        this.asNavFor = params.asNavFor             || null;    // not implemented - Schedules v2.0
+        
         this.currentSlide = 0;
-
         SoSlider.#LIST.push(this);
         this.initSlider();
     }
@@ -131,18 +145,18 @@ class SoSlider{
             this.dotsElement[this.currentSlide].classList.add('active');
         }
         if(this.fade){
-            this.track.animate([{opacity: 0},],{duration: this.speed, fill: "forwards", easing: 'ease-in'});
+            this.track.animate([{opacity: 0},],{duration: this.speed, fill: "forwards", easing: this.ease});
             setTimeout(() => {
                 this.track.style.transform = `translateX(-${pos}px)`;
                 setTimeout(() => {
-                    this.track.animate([{opacity: 1},],{duration: this.speed, fill: "forwards", easing: 'ease-out'});
+                    this.track.animate([{opacity: 1},],{duration: this.speed, fill: "forwards", easing: this.ease});
                 }, 100);
             }, this.speed);
         }
         else{
             let a = this.track.animate(
                 [{transform: `translateX(-${pos}px)`}],
-                {duration: this.speed, fill: 'forwards', easing: 'ease-in-out'}
+                {duration: this.speed, fill: 'forwards', easing: this.ease}
             );
             a.onfinish = () => {this.track.style.transform = `translateX(-${pos}px)`};
         }
@@ -162,6 +176,7 @@ class SoSlider{
             this.slides.forEach((s, i) => {
                 let dot = document.createElement('button');
                 dot.classList.add('SoSlider__dot')
+                if(this.dotsClass !== null) dot.classList.add(this.dotsClass);
                 if(i === 0) dot.classList.add('active');
                 dotParent.append(dot);
                 this.dotsElement.push(dot);
@@ -191,12 +206,13 @@ class SoSlider{
         this.element.style.setProperty('--arrowsColor', this.arrowsColor);
 
         this.leftArrow = document.createElement('div');
-        console.log(this.leftArrow)
         this.leftArrow.classList.add('SoSlider__leftArrow', 'SoSlider__arrows');
+        if(this.arrowsClass !== null) this.leftArrow.classList.add(this.arrowsClass);
         this.leftArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_left_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z"></path></g></svg>';
 
         this.rightArrow = document.createElement('div');
         this.rightArrow.classList.add('SoSlider__rightArrow', 'SoSlider__arrows');
+        if(this.arrowsClass !== null) this.rightArrow.classList.add(this.arrowsClass);
         this.rightArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_right_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path></g></svg>';
 
         this.element.append(this.leftArrow);
