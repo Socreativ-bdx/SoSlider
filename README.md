@@ -1,29 +1,38 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Sõcreativ' Slider JS.
 
-### What is this repository for? ###
+### Information ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Work In Progress
+* v.0.1
 
-### How do I get set up? ###
+### Documentation ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+#### Create basic slider
+```js
+const myslider = new SoSlider(element, {});
+```
 
-### Contribution guidelines ###
+#### Create slider with options
+```js
+const slider = new SoSlider(element, {
+    speed: 350,
+    arrows: true,
+    autoplay: true,
+    infinite: true
+});
+```
 
-* Writing tests
-* Code review
-* Other guidelines
+#### Slider options
 
-### Who do I talk to? ###
+| Options | Type   | Default | Description
+|---------|--------|---------|---------------------
+| `speed` | `int`  | `350`   | Animation Speed
+|
 
-* Repo owner or admin
-* Other community or team contact
+
+### Sõcreativ' ###
+
+* https://socreativ.com/
+* [contact@socreativ.com]("mailto:contact@socreativ.com")
