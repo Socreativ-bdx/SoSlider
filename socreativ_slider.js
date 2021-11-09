@@ -25,6 +25,7 @@ class SoSlider{
         this.dotsElement = params.dotsElement || null;
         this.dotsColor = params.dotsColor || '#000';
         this.arrowsColor = params.arrowsColor || '#000';
+        this.asNavFor = params.asNavFor || null;
         this.currentSlide = 0;
 
         SoSlider.#LIST.push(this);
@@ -189,17 +190,14 @@ class SoSlider{
     createArrows(){
         this.element.style.setProperty('--arrowsColor', this.arrowsColor);
 
-        this.arrowsElement = [];
         this.leftArrow = document.createElement('div');
+        console.log(this.leftArrow)
         this.leftArrow.classList.add('SoSlider__leftArrow', 'SoSlider__arrows');
         this.leftArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_left_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z"></path></g></svg>';
 
         this.rightArrow = document.createElement('div');
         this.rightArrow.classList.add('SoSlider__rightArrow', 'SoSlider__arrows');
         this.rightArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_right_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path></g></svg>';
-
-        this.arrowsElement.push(this.leftArrow);
-        this.arrowsElement.push(this.rightArrow);
 
         this.element.append(this.leftArrow);
         this.element.append(this.rightArrow);
