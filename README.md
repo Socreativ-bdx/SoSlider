@@ -1,3 +1,5 @@
+[](https://img.shields.io/badge/Version-v1.0-informational);
+
 # README #
 
 Sõcreativ' Slider JS.
@@ -26,13 +28,14 @@ const slider = new SoSlider(element, {
 
 #### Slider options
 
-| Options | Type   | Default | Description
-|---------|--------|---------|---------------------
-| `speed` | `int`  | `350`   | Animation Speed
-|
+| Options   | Type      | Default   | Description           |
+|-----------|-----------|-----------|-----------------------|
+| `speed`   | `int`     | `350`     | Animation Speed       |
+| `arrows`  | `bool`    | `false`   | Show arrows           |
+| `dots`    | `bool`    | `false`   | Show dots             |
 
 
-### Sõcreativ' ###
+### Sõcreativ' Web agency ###
 
 * [https://socreativ.com/](https://socreativ.com/)
 * [contact@socreativ.com](mailto:contact@socreativ.com)
