@@ -1,4 +1,4 @@
-[](https://img.shields.io/badge/Version-v1.0-informational);
+![version](https://img.shields.io/badge/Version-v1.0-informational)
 
 # README #
 
