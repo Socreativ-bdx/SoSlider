@@ -34,5 +34,5 @@ const slider = new SoSlider(element, {
 
 ### Sõcreativ' ###
 
-* https://socreativ.com/
-* [contact@socreativ.com]("mailto:contact@socreativ.com")
+* [https://socreativ.com/](https://socreativ.com/)
+* [contact@socreativ.com](mailto:contact@socreativ.com)
