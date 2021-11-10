@@ -25,9 +25,9 @@ class SoSlider{
         this.arrows = params.arrows                 || false;
         this.vertical = params.vertical             || false;   // not implemented - Scheduled v2.0
         this.autoplay = params.autoplay             || false;
-        this.infinite = params.infinite             || false;   // Scheduled improvement v1.4
+        this.infinite = params.infinite             || false;   // Scheduled improvement v1.2
         this.speed = params.speed                   || 300;
-        this.pauseOnHover = params.pauseOnHover     || false;   // not implemented - Scheduled v1.2
+        this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
         this.draggable = params.draggable           || false;   // not implemented - Scheduled v2.0
@@ -56,6 +56,7 @@ class SoSlider{
         if(this.arrows) this.createArrows();
         if(this.draggable) this.ListenForDrag();
         if(this.autoplay) this.initAutoplay();
+        if(this.pauseOnHover && this.autoPlay) this.ListenForHover();
     }
 
     createTrack(){
@@ -125,8 +126,11 @@ class SoSlider{
         if(this.infinite){
             this.slideToNext();
         }
-        else if(this.currentSlide !== (this.slides.length - 1)){
+        else if(this.currentSlide !== (this.slides.length - 1) && this.fade){
             this.slideToNext();
+        }
+        else if(this.currentSlide !== (this.slides.length - 1) && !this.fade){
+
         }   
         else{
             this.clearAutoplayInstance();
@@ -236,6 +240,11 @@ class SoSlider{
                 this.setAutoplayInstance()
             } 
         });
+    }
+
+    ListenForHover(){
+        this.element.addEventListener('mouseover', () => this.clearAutoplayInstance());
+        this.element.addEventListener('mouseleave', () => this.setAutoplayInstance());
     }
 
     kill(){
