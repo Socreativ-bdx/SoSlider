@@ -1,7 +1,7 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.2
+ * Version: v1.3
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 
@@ -30,10 +30,10 @@ class SoSlider{
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
         this.draggable = params.draggable           || false;   // not implemented - Scheduled v2.0
-        this.appendArrows = params.appendArrows     || null;    // not implemented - Scheduled v1.3
-        this.appendDots = params.appendDots         || null;    // not implemented - Scheduled v1.3
-        this.nextArrow = params.nextArrow           || null;    // not implemented - Schedlued v1.3
-        this.prevArrow = params.prevArrow           || null;    // not implemented - Scheduled v1.3
+        this.appendArrows = params.appendArrows     || null;    
+        this.appendDots = params.appendDots         || null;    
+        this.nextArrow = params.nextArrow           || null; 
+        this.prevArrow = params.prevArrow           || null;
         this.arrowsClass = params.arrowsClass       || null;
         this.dotsClass = params.dotsClass           || null;
         this.dotsColor = params.dotsColor           || '#000';
@@ -211,26 +211,25 @@ class SoSlider{
     }
 
     createDots(){
-        this.element.style.setProperty('--dotsColor', this.dotsColor);
-        if(!this.dotsElement){
-            this.dotsElement = [];
-            const dotParent = document.createElement('div');
-            dotParent.classList.add('SoSlider__dots');
-            this.element.append(dotParent);
-            this.slides.forEach((s, i) => {
-                let dot = document.createElement('button');
-                dot.classList.add('SoSlider__dot')
-                if(this.dotsClass !== null) dot.classList.add(this.dotsClass);
-                if(i === 0) dot.classList.add('active');
-                dotParent.append(dot);
-                this.dotsElement.push(dot);
-            });
+        if(this.appendDots){
+            this.appendDots.append(dotParent);
+            this.appendDots.style.setProperty('--dotsColor', this.dotsColor);
         }
         else{
-            console.warn('dotsElement: Feature not implemented yet.');
-            this.dotsElement = false;
-            return this.createDots();
+            this.element.append(dotParent)
+            this.element.style.setProperty('--dotsColor', this.dotsColor);
         }
+        this.dotsElement = [];
+        const dotParent = document.createElement('div');
+        dotParent.classList.add('SoSlider__dots');
+        this.slides.forEach((s, i) => {
+            let dot = document.createElement('button');
+            dot.classList.add('SoSlider__dot')
+            if(this.dotsClass !== null) dot.classList.add(this.dotsClass);
+            if(i === 0) dot.classList.add('active');
+            dotParent.append(dot);
+            this.dotsElement.push(dot);
+        });
         this.ListenForDots();
     }
 
@@ -250,21 +249,37 @@ class SoSlider{
     }
 
     createArrows(){
-        this.element.style.setProperty('--arrowsColor', this.arrowsColor);
-
-        this.leftArrow = document.createElement('div');
-        this.leftArrow.classList.add('SoSlider__leftArrow', 'SoSlider__arrows');
+        if(!this.prevArrow){
+            this.leftArrow = document.createElement('div');
+            this.leftArrow.classList.add('SoSlider__leftArrow', 'SoSlider__arrows');
+            this.leftArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_left_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z"></path></g></svg>';
+        }
+        else{
+            this.leftArrow = this.prevArrow
+        }
         if(this.arrowsClass !== null) this.leftArrow.classList.add(this.arrowsClass);
-        this.leftArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_left_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z"></path></g></svg>';
 
-        this.rightArrow = document.createElement('div');
-        this.rightArrow.classList.add('SoSlider__rightArrow', 'SoSlider__arrows');
+
+        if(!this.nextArrow){
+            this.rightArrow = document.createElement('div');
+            this.rightArrow.classList.add('SoSlider__rightArrow', 'SoSlider__arrows');
+            this.rightArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_right_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path></g></svg>';
+        }
+        else{
+            this.rightArrow = this.nextArrow
+        }
         if(this.arrowsClass !== null) this.rightArrow.classList.add(this.arrowsClass);
-        this.rightArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_right_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path></g></svg>';
 
-        this.element.append(this.leftArrow);
-        this.element.append(this.rightArrow);
-
+        if(this.appendArrows){
+            this.appendArrows.style.setProperty('--arrowsColor', this.arrowsColor);
+            this.appendArrows.append(this.leftArrow);
+            this.appendArrows.append(this.rightArrow);
+        }
+        else{
+            this.element.style.setProperty('--arrowsColor', this.arrowsColor);
+            this.element.append(this.leftArrow);
+            this.element.append(this.rightArrow);
+        }
         this.ListenForArrows();
     }
 
