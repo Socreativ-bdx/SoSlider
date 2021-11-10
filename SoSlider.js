@@ -29,7 +29,7 @@ class SoSlider{
         this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
-        this.draggable = params.draggable           || false;   // not implemented - Scheduled v2.0
+        this.draggable = params.draggable           || false;   // not implemented - Scheduled v1.6
         this.appendArrows = params.appendArrows     || null;    
         this.appendDots = params.appendDots         || null;    
         this.nextArrow = params.nextArrow           || null; 
@@ -211,14 +211,6 @@ class SoSlider{
     }
 
     createDots(){
-        if(this.appendDots){
-            this.appendDots.append(dotParent);
-            this.appendDots.style.setProperty('--dotsColor', this.dotsColor);
-        }
-        else{
-            this.element.append(dotParent)
-            this.element.style.setProperty('--dotsColor', this.dotsColor);
-        }
         this.dotsElement = [];
         const dotParent = document.createElement('div');
         dotParent.classList.add('SoSlider__dots');
@@ -230,6 +222,14 @@ class SoSlider{
             dotParent.append(dot);
             this.dotsElement.push(dot);
         });
+        if(this.appendDots){
+            this.appendDots.append(dotParent);
+            this.appendDots.style.setProperty('--dotsColor', this.dotsColor);
+        }
+        else{
+            this.element.append(dotParent)
+            this.element.style.setProperty('--dotsColor', this.dotsColor);
+        }
         this.ListenForDots();
     }
 
