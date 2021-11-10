@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/Version-v1.1-informational)
+![version](https://img.shields.io/badge/Version-v1.2-informational)
 
 # README #
 
@@ -7,7 +7,7 @@ Sõcreativ' Slider JS.
 ### Information ###
 
 * Work In Progress
-* v1.1
+* v1.2
 
 ### Documentation ###
 
@@ -50,6 +50,8 @@ const slider = new SoSlider(element, {
 | `arrowsClass`     | `String`          | `null`        | Class for arrows elements |
 | `arrowsColor`     | `String`          | `'#000'`      | Arrows colors             |
 | `dotsColor`       | `String`          | `'#000'`      | Dots colors               |
+| `soon`            | `soon`            | `'soon'`      | Soon                      |
+
 
 
 ### Sõcreativ' Web agency ###

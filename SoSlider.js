@@ -1,8 +1,7 @@
 /**
  * SoSlider
- * Date: November 2021.
  * Author: Sõcreativ'
- * Version: v1.1
+ * Version: v1.2
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 
@@ -23,9 +22,9 @@ class SoSlider{
         this.dots = params.dots                     || false;
         this.ease = params.ease                     || 'ease-in-out';
         this.arrows = params.arrows                 || false;
-        this.vertical = params.vertical             || false;   // not implemented - Scheduled v2.0
+        this.vertical = params.vertical             || false;   // not implemented - Scheduled v1.6
         this.autoplay = params.autoplay             || false;
-        this.infinite = params.infinite             || false;   // Scheduled improvement v1.2
+        this.infinite = params.infinite             || false;
         this.speed = params.speed                   || 300;
         this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
@@ -39,8 +38,13 @@ class SoSlider{
         this.dotsClass = params.dotsClass           || null;
         this.dotsColor = params.dotsColor           || '#000';
         this.arrowsColor = params.arrowsColor       || '#000';
-        this.asNavFor = params.asNavFor             || null;    // not implemented - Schedules v2.0
-        
+        this.asNavFor = params.asNavFor             || null;    // not implemented - Scheduled v1.5
+        this.slideToShow = params.slideToShow       || 1;       // not implemented - Scheduled v1.4
+        this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.4
+        this.centerMode = params.centerMode         || false;   // not implemented - Scheduled v1.4
+
+        this.isSliding = false;
+        if(this.slideToScroll > this.slideToShow) this.slideToScroll = this.slideToShow;
         this.currentSlide = 0;
         SoSlider.#LIST.push(this);
         this.initSlider();
@@ -49,14 +53,17 @@ class SoSlider{
     initSlider(){
         this.element.classList.add('SoSlider');
         this.slides = Array.from(this.element.children);
+        this.width = this.element.clientWidth;
+        this.offset = this.infinite && !this.fade ? this.slideToShow : 0;
+        
         this.createTrack();
         this.resizeSlides();
-
         if(this.dots) this.createDots();
         if(this.arrows) this.createArrows();
         if(this.draggable) this.ListenForDrag();
         if(this.autoplay) this.initAutoplay();
-        if(this.pauseOnHover && this.autoPlay) this.ListenForHover();
+        if(this.pauseOnHover && this.autoplay) this.ListenForHover();
+        if(this.infinite && !this.fade) this.initInfinite();
     }
 
     createTrack(){
@@ -64,15 +71,14 @@ class SoSlider{
         this.frame.classList.add('SoSlider__frame');
         this.element.append(this.frame);
 
-
         this.track = document.createElement('div');
         this.track.classList.add('SoSlider__track');
+        this.track.style.transform = `translateX(-${this.offset*this.width}px)`;
         this.frame.append(this.track);
         this.slides.forEach(s => this.track.append(s));
     }
 
     resizeSlides(){
-        this.width = this.element.clientWidth;
         this.slides.forEach((s, i) => {
             if(i === 0) s.classList.add('active');
             s.classList.add('SoSlider__slide');
@@ -80,23 +86,18 @@ class SoSlider{
         });
     }
 
-    slideToNext(){
-        if(this.currentSlide < (this.slides.length - 1)){
-            this.currentSlide++;
-        }
-        else if(this.infinite){
-            this.currentSlide = 0;
-        }
-        this.slide(this.width*this.currentSlide);
-    }
-
-    slideToPrev(){
-        if(this.currentSlide > 0){
-            this.currentSlide--;
-            this.slide(this.width*this.currentSlide);
-        }
-        else if(this.infinite){
-            this.currentSlide = 0;
+    initInfinite(){
+        for(let i=0;i<this.slideToShow;i++) {
+            const copyFirst = this.slides[i].cloneNode(true);
+            copyFirst.removeAttribute('data-fancybox');
+            copyFirst.classList.add('SoSlider__copy');
+            if(i===0) copyFirst.classList.remove('active');
+            this.track.append(copyFirst);
+        
+            const copyLast = this.slides[this.slides.length - 1 - i].cloneNode(true);
+            copyLast.removeAttribute('data-fancybox');
+            copyLast.classList.add('SoSlider__copy');
+            this.track.prepend(copyLast);
         }
     }
 
@@ -115,7 +116,9 @@ class SoSlider{
     }
 
     setAutoplayInstance(){
-        this.autoPlayInstance = setInterval(this.autoPlay.bind(this), this.autoplaySpeed);
+        if(this.autoplay){
+            this.autoPlayInstance = setInterval(this.autoPlay.bind(this), this.autoplaySpeed);
+        }
     }
 
     clearAutoplayInstance(){
@@ -128,10 +131,7 @@ class SoSlider{
         }
         else if(this.currentSlide !== (this.slides.length - 1) && this.fade){
             this.slideToNext();
-        }
-        else if(this.currentSlide !== (this.slides.length - 1) && !this.fade){
-
-        }   
+        } 
         else{
             this.clearAutoplayInstance();
         } 
@@ -141,28 +141,68 @@ class SoSlider{
         this.clearAutoplayInstance();
     }
 
-    slide(pos){
+    setClassActive(i){
         document.querySelector('.SoSlider__slide.active').classList.remove('active');
-        this.slides[this.currentSlide].classList.add('active');
+        this.slides[i].classList.add('active');
         if(this.dots){
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
-            this.dotsElement[this.currentSlide].classList.add('active');
+            this.dotsElement[i].classList.add('active');
         }
-        if(this.fade){
-            this.track.animate([{opacity: 0},],{duration: this.speed, fill: "forwards", easing: this.ease});
+    }
+
+    slideToNext(){
+        this.isSliding = true;
+        if(this.currentSlide < (this.slides.length - 1)){
+            this.currentSlide++;
+        }
+        else if(this.infinite){
+            this.currentSlide = 0;             
+            if(!this.fade){
+                this.fakeSlide = this.slides.length; 
+                this.setClassActive(this.currentSlide);
+                return this.slideTo(this.fakeSlide, this.currentSlide);
+            }
+        }
+        this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+        this.setClassActive(this.currentSlide);
+    }
+
+    slideToPrev(){
+        this.isSliding = true;
+        if(this.currentSlide > 0){
+            this.currentSlide--;
+        }
+        else if(this.infinite){
+            this.currentSlide = this.slides.length - 1;             
+            if(!this.fade){
+                this.fakeSlide = -1; 
+                this.setClassActive(this.currentSlide);
+                return this.slideTo(this.fakeSlide, this.currentSlide);
+            }
+        }
+        this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+        this.setClassActive(this.currentSlide);
+    }
+
+    slideTo(slideToAnim, slideToTranslate = slideToAnim){
+        const a = this.track.animate(
+            [{transform: `translateX(-${(slideToAnim+this.offset)*this.width}px)`}],
+            {duration: this.speed, easing: this.ease}
+        );
+        a.onfinish = () => {
+            this.track.style.transform = `translateX(-${(slideToTranslate+this.offset)*this.width}px)`;
+            this.isSliding = false;
+        };
+    }
+
+    fadeTo(slide){
+        const a = this.track.animate([{opacity: 0},],{duration: this.speed, fill: "forwards", easing: this.ease});
+        a.onfinish = () => {
+            this.track.style.transform = `translateX(-${(slide+this.offset)*this.width}px)`;
             setTimeout(() => {
-                this.track.style.transform = `translateX(-${pos}px)`;
-                setTimeout(() => {
-                    this.track.animate([{opacity: 1},],{duration: this.speed, fill: "forwards", easing: this.ease});
-                }, 100);
-            }, this.speed);
-        }
-        else{
-            let a = this.track.animate(
-                [{transform: `translateX(-${pos}px)`}],
-                {duration: this.speed, fill: 'forwards', easing: this.ease}
-            );
-            a.onfinish = () => {this.track.style.transform = `translateX(-${pos}px)`};
+                this.track.animate([{opacity: 1},],{duration: this.speed, fill: "forwards", easing: this.ease});
+                this.isSliding = false;
+            }, 100);
         }
     }
 
@@ -191,18 +231,21 @@ class SoSlider{
             this.dotsElement = false;
             return this.createDots();
         }
-        console.log('reached')
         this.ListenForDots();
     }
 
     ListenForDots(){
         this.dotsElement.forEach((dot, i) => dot.addEventListener('click', () => {
-            if(this.autoPlay){
-                this.resetInterval();
-                this.setAutoplayInstance();
+            if(!this.isSliding){      
+                this.isSliding = true;
+                if(this.autoplay){
+                    this.resetInterval();
+                    this.setAutoplayInstance();
+                }
+                this.currentSlide = i;
+                this.slideTo(this.currentSlide+this.offset);
+                this.setClassActive(this.currentSlide);
             }
-            this.currentSlide = i;
-            this.slide(this.width*this.currentSlide);
         }));
     }
 
@@ -227,18 +270,22 @@ class SoSlider{
 
     ListenForArrows(){
         this.leftArrow.addEventListener('click', () => {
-            this.slideToPrev();
-            if(this.autoPlay){
-                this.resetInterval();
-                this.setAutoplayInstance()
-            } 
+            if(!this.isSliding){
+                this.slideToPrev();
+                if(this.autoplay){
+                    this.resetInterval();
+                    this.setAutoplayInstance()
+                } 
+            }
         });
         this.rightArrow.addEventListener('click', () => {
-            this.slideToNext();
-            if(this.autoPlay){
-                this.resetInterval();
-                this.setAutoplayInstance()
-            } 
+            if(!this.isSliding){
+                this.slideToNext();
+                if(this.autoplay){
+                    this.resetInterval();
+                    this.setAutoplayInstance()
+                } 
+            }
         });
     }
 
