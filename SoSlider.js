@@ -15,7 +15,7 @@ class SoSlider{
     }
 
     static killAll(){
-        SoSlider.#LIST.forEach(instance => delete instance);
+        SoSlider.#LIST.forEach(instance => instance.kill());
     }
 
     constructor(element, params = {}){
@@ -308,6 +308,13 @@ class SoSlider{
     ListenForHover(){
         this.element.addEventListener('mouseover', () => this.clearAutoplayInstance());
         this.element.addEventListener('mouseleave', () => this.setAutoplayInstance());
+    }
+
+    kill(){
+        clearInterval(this.autoPlayInstance);
+        this.observer.disconnect();
+        const id = SoSlider.#LIST.indexOf(this);
+        SoSlider.#LIST.splice(id, 1);
     }
 
 
