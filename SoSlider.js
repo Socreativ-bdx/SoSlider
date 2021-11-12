@@ -4,6 +4,7 @@
  * Version: v1.3
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
+console.log('SoSlider - v1.3 - Sõcreativ');
 
 class SoSlider{
 
@@ -68,8 +69,7 @@ class SoSlider{
     }
 
     testKill(){
-        this.element.addEventListener('scroll', () => console.log('aaaa'));
-        setInterval(() => console.log('bbbbb'), 2000);
+        setInterval(() => console.log(this.element), 3000);
     }
 
     createTrack(){
