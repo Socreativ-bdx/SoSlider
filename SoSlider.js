@@ -65,11 +65,6 @@ class SoSlider{
         if(this.autoplay) this.initAutoplay();
         if(this.pauseOnHover && this.autoplay) this.ListenForHover();
         if(this.infinite && !this.fade) this.initInfinite();
-        this.testKill()
-    }
-
-    testKill(){
-        setInterval(() => console.log(this.element), 3000);
     }
 
     createTrack(){
