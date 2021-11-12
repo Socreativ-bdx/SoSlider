@@ -15,7 +15,7 @@ class SoSlider{
     }
 
     static killAll(){
-        SoSlider.#LIST.forEach(instance => instance.kill());
+        SoSlider.#LIST.forEach(instance => delete instance);
     }
 
     constructor(element, params = {}){
@@ -315,10 +315,5 @@ class SoSlider{
         this.element.addEventListener('mouseleave', () => this.setAutoplayInstance());
     }
 
-    kill(){
-        const i = SoSlider.#LIST.indexOf(this);
-        SoSlider.#LIST.splice(i, 1);
-        delete this;
-    }
 
 }
