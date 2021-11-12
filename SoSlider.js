@@ -318,6 +318,8 @@ class SoSlider{
     kill(){
         const i = SoSlider.#LIST.indexOf(this);
         SoSlider.#LIST.splice(i, 1);
+        this = null;
+        delete this;
     }
 
 }
