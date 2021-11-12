@@ -5,10 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoSlider Demo</title>
+    <link rel="stylesheet" href="SoSlider-min.css">
+    <style>
+        body{background-color: rgb(42, 29, 59);color: #FFF;display:flex;justify-content:center;width:100vw;height:100vh;flex-direction:column;}
+        .slider{width: 80%;margin:auto;height: 70%;}
+        h1{text-align: center;margin-top: 5vh;}
+    </style>
 </head>
 <body>
 
     <h1>SoSlider Demo</h1>
-    <h2>Soon...</h2>
+
+    <div class="slider">
+        <img src="https://via.placeholder.com/1024x768/41007a/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%201" alt="img-1">
+        <img src="https://via.placeholder.com/1024x768/41007a/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%202" alt="img-2">
+        <img src="https://via.placeholder.com/1024x768/41007a/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%203" alt="img-3">
+        <img src="https://via.placeholder.com/1024x768/41007a/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%204" alt="img-4">
+        <img src="https://via.placeholder.com/1024x768/41007a/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%205" alt="img-5">
+    </div>
+   
 </body>
+<script src="SoSlider-min.js"></script>
+<script>
+    const mySliderElement = document.querySelector('.slider');
+    const mySlider = new SoSlider(mySliderElement,{
+        speed: 350,
+        dots: true,
+        arrows: true,
+        autoplay: true,
+        dotsColor: "#FFF",
+        arrowsColor: "#FFF",
+        infinite: true
+    });
+</script>
+
 </html>
