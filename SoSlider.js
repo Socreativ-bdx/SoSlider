@@ -25,7 +25,7 @@ class SoSlider{
         this.vertical = params.vertical             || false;   // not implemented - Scheduled v1.6
         this.autoplay = params.autoplay             || false;
         this.infinite = params.infinite             || false;
-        this.speed = params.speed                   || 300;
+        this.speed = params.speed                   || 350;
         this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
@@ -64,6 +64,12 @@ class SoSlider{
         if(this.autoplay) this.initAutoplay();
         if(this.pauseOnHover && this.autoplay) this.ListenForHover();
         if(this.infinite && !this.fade) this.initInfinite();
+        this.testKill()
+    }
+
+    testKill(){
+        this.element.addEventListener('scroll', () => console.log('aaaa'));
+        setInterval(() => console.log('bbbbb'), 2000);
     }
 
     createTrack(){
