@@ -7,7 +7,7 @@ Sõcreativ' Slider JS.
 ### Information ###
 
 * Work In Progress
-* v1.3
+* v1.4
 
 ### Documentation ###
 
