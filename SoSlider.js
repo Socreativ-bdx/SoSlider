@@ -5,7 +5,7 @@
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.3 - Sõcreativ');
+console.log('SoSlider - v1.4 - Sõcreativ');
 
 class SoSlider{
 
@@ -31,7 +31,8 @@ class SoSlider{
         this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
-        this.draggable = params.draggable           || false;   // not implemented - Scheduled v1.4
+        this.draggable = params.draggable           || false;
+        this.treshold = params.treshold             || 200;
         this.appendArrows = params.appendArrows     || null;    
         this.appendDots = params.appendDots         || null;    
         this.nextArrow = params.nextArrow           || null; 
@@ -47,11 +48,8 @@ class SoSlider{
 
         // Handle incompatible params
         if(this.fade) this.draggable = false;
-
-        this.trackOffset = 0;
-        this.isSliding = false;
         if(this.slideToScroll > this.slideToShow) this.slideToScroll = this.slideToShow;
-        this.currentSlide = 0;
+
         SoSlider.#LIST.push(this);
         this.initSlider();
     }
@@ -61,9 +59,11 @@ class SoSlider{
         this.slides = Array.from(this.element.children);
         this.width = this.element.clientWidth;
         this.offset = this.infinite && !this.fade ? this.slideToShow : 0;
-        
+        this.isSliding = false;
+        this.trackOffset = 0;
+        this.currentSlide = 0;
+
         this.createTrack();
-        this.resizeSlides();
         if(this.dots) this.createDots();
         if(this.arrows) this.createArrows();
         if(this.draggable) this.ListenForDrag();
@@ -81,14 +81,11 @@ class SoSlider{
         this.track.classList.add('SoSlider__track');
         this.track.style.transform = `translateX(-${this.offset*this.width}px)`;
         this.frame.append(this.track);
-        this.slides.forEach(s => this.track.append(s));
-    }
-
-    resizeSlides(){
         this.slides.forEach((s, i) => {
             if(i === 0) s.classList.add('active');
             s.classList.add('SoSlider__slide');
             s.style.width = this.width+'px';
+            this.track.append(s);
         });
     }
 
@@ -191,13 +188,13 @@ class SoSlider{
     }
 
     slideTo(slideToAnim, slideToTranslate = slideToAnim){
-        this.trackOffset = -(slideToAnim+this.offset)*this.width;
         const a = this.track.animate(
-            [{transform: `translateX(${this.trackOffset}px)`}],
+            [{transform: `translateX(-${(slideToAnim+this.offset)*this.width}px)`}],
             {duration: this.speed, easing: this.ease}
         );
         a.onfinish = () => {
-            this.track.style.transform = `translateX(${this.trackOffset}px)`;
+            this.track.style.transform = `translateX(-${(slideToTranslate+this.offset)*this.width}px)`;
+            this.trackOffset = -(slideToTranslate+this.offset) * this.width;
             this.isSliding = false;
         };
     }
@@ -216,6 +213,7 @@ class SoSlider{
 
     ListenForDrag(){
         this.drag = {initialPos: 0, posX1: 0, posX2: 0};
+        this.trackOffset = this.infinite ? -this.width : 0;
         this.track.addEventListener('mousedown', this.DragStart.bind(this));
         this.track.addEventListener('touchstart', this.DragStart.bind(this));
         this.track.addEventListener('touchend', this.DragEnd.bind(this));
@@ -226,17 +224,29 @@ class SoSlider{
         e.preventDefault();
         this.drag.initialPos = this.trackOffset;
         if(e.type == 'touchstart'){
-            this.drag.posX = e.touches[0].clientX
+            this.drag.posX1 = e.touches[0].clientX
         }
         else{
-            this.drag.posX = e.clientX;
-            document.addEventListener('mouseup', this.DragEnd.bind(this));
-            document.addEventListener('mousemove', this.Dragging.bind(this));
+            this.drag.posX1 = e.clientX;
+            document.onmouseup = this.DragEnd.bind(this);
+            document.onmousemove = this.Dragging.bind(this)
         }
     }
 
     DragEnd(e){
-       
+        let posFinal = -this.track.style.transform.match(/\d+/)[0];
+        if(posFinal - this.drag.initialPos < -this.treshold){
+           this.slideToNext()
+        }
+        else if(posFinal - this.drag.initialPos > this.treshold){
+            this.slideToPrev()
+        }
+        else{
+           this.slideTo(this.currentSlide)
+        }
+
+        document.onmouseup = null;
+        document.onmousemove = null;
     }
 
     Dragging(e){
@@ -248,7 +258,8 @@ class SoSlider{
             this.drag.posX2 = this.drag.posX1 - e.clientX;
             this.drag.posX1 = e.clientX;
         }
-        let newPos = this.trackOffset - this.drag.posX2
+        let newPos = this.trackOffset - this.drag.posX2;
+
         this.track.style.transform = `translateX(${newPos}px)`
         this.trackOffset = newPos;
     }
