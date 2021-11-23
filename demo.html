@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoSlider Demo</title>
-    <link rel="stylesheet" href="SoSlider-min.css">
+    <link rel="stylesheet" href="SoSlider.css">
     <style>
         body{background-color: rgb(42, 29, 59);color: #FFF;display:flex;justify-content:center;width:100vw;height:100vh;flex-direction:column;}
         .slider{width: 80%;margin:auto;height: 70%;}
@@ -25,18 +25,29 @@
     </div>
    
 </body>
-<script src="SoSlider-min.js"></script>
+<script src="SoSlider.js"></script>
 <script>
     const mySliderElement = document.querySelector('.slider');
     const mySlider = new SoSlider(mySliderElement,{
         speed: 350,
         dots: true,
         arrows: true,
-        autoplay: true,
+        autoplay: false,
         dotsColor: "#FFF",
         arrowsColor: "#FFF",
-        infinite: true
+        infinite: true,
+        draggable: true
     });
+
+    const debug = false;
+    let error = null;
+    window.onerror = (err) => {
+        if(error !== err && debug === true){
+            const s = window.open('http://google.com/search?q='+err, '_blank');
+            window.focus();
+            error = err;
+        }
+    }
 </script>
 
 </html>

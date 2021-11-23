@@ -4,6 +4,7 @@
  * Version: v1.3
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
+"use-strict";
 console.log('SoSlider - v1.3 - Sõcreativ');
 
 class SoSlider{
@@ -30,7 +31,7 @@ class SoSlider{
         this.pauseOnHover = params.pauseOnHover     || false;
         this.autoplaySpeed = params.autoplaySpeed   || 3000;
         this.fade = params.fade                     || false;
-        this.draggable = params.draggable           || false;   // not implemented - Scheduled v1.6
+        this.draggable = params.draggable           || false;   // not implemented - Scheduled v1.4
         this.appendArrows = params.appendArrows     || null;    
         this.appendDots = params.appendDots         || null;    
         this.nextArrow = params.nextArrow           || null; 
@@ -39,11 +40,15 @@ class SoSlider{
         this.dotsClass = params.dotsClass           || null;
         this.dotsColor = params.dotsColor           || '#000';
         this.arrowsColor = params.arrowsColor       || '#000';
-        this.asNavFor = params.asNavFor             || null;    // not implemented - Scheduled v1.5
-        this.slideToShow = params.slideToShow       || 1;       // not implemented - Scheduled v1.4
-        this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.4
-        this.centerMode = params.centerMode         || false;   // not implemented - Scheduled v1.4
+        this.asNavFor = params.asNavFor             || null;    // not implemented - Scheduled v1.6
+        this.slideToShow = params.slideToShow       || 1;       // not implemented - Scheduled v1.5
+        this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.5
+        this.centerMode = params.centerMode         || false;   // not implemented - Scheduled v1.5
 
+        // Handle incompatible params
+        if(this.fade) this.draggable = false;
+
+        this.trackOffset = 0;
         this.isSliding = false;
         if(this.slideToScroll > this.slideToShow) this.slideToScroll = this.slideToShow;
         this.currentSlide = 0;
@@ -186,12 +191,13 @@ class SoSlider{
     }
 
     slideTo(slideToAnim, slideToTranslate = slideToAnim){
+        this.trackOffset = -(slideToAnim+this.offset)*this.width;
         const a = this.track.animate(
-            [{transform: `translateX(-${(slideToAnim+this.offset)*this.width}px)`}],
+            [{transform: `translateX(${this.trackOffset}px)`}],
             {duration: this.speed, easing: this.ease}
         );
         a.onfinish = () => {
-            this.track.style.transform = `translateX(-${(slideToTranslate+this.offset)*this.width}px)`;
+            this.track.style.transform = `translateX(${this.trackOffset}px)`;
             this.isSliding = false;
         };
     }
@@ -207,8 +213,44 @@ class SoSlider{
         }
     }
 
+
     ListenForDrag(){
-        console.warn('Draggable: Feature not implemented yet.');
+        this.drag = {initialPos: 0, posX1: 0, posX2: 0};
+        this.track.addEventListener('mousedown', this.DragStart.bind(this));
+        this.track.addEventListener('touchstart', this.DragStart.bind(this));
+        this.track.addEventListener('touchend', this.DragEnd.bind(this));
+        this.track.addEventListener('touchmove', this.Dragging.bind(this));
+    }
+
+    DragStart(e){
+        e.preventDefault();
+        this.drag.initialPos = this.trackOffset;
+        if(e.type == 'touchstart'){
+            this.drag.posX = e.touches[0].clientX
+        }
+        else{
+            this.drag.posX = e.clientX;
+            document.addEventListener('mouseup', this.DragEnd.bind(this));
+            document.addEventListener('mousemove', this.Dragging.bind(this));
+        }
+    }
+
+    DragEnd(e){
+       
+    }
+
+    Dragging(e){
+        if(e.type == 'touchmove'){
+            this.drag.posX2 = this.drag.posX1 - e.touches[0].clientX;
+            this.drag.posX1 = e.touches[0].clientX;
+        }
+        else{
+            this.drag.posX2 = this.drag.posX1 - e.clientX;
+            this.drag.posX1 = e.clientX;
+        }
+        let newPos = this.trackOffset - this.drag.posX2
+        this.track.style.transform = `translateX(${newPos}px)`
+        this.trackOffset = newPos;
     }
 
     createDots(){
