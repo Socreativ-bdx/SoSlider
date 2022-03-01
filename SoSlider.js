@@ -43,7 +43,7 @@ class SoSlider{
         this.arrowsColor = params.arrowsColor       || '#000';
         this.asNavFor = params.asNavFor             || null;    // not implemented - Scheduled v1.6
         this.slideToShow = params.slideToShow       || 1;       // not implemented - Scheduled v1.5
-        this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.5
+        this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.5
         this.centerMode = params.centerMode         || false;   // not implemented - Scheduled v1.5
 
         // Handle incompatible params
@@ -235,15 +235,22 @@ class SoSlider{
 
     DragEnd(e){
         let posFinal = -this.track.style.transform.match(/\d+/)[0];
-        if(posFinal - this.drag.initialPos < -this.treshold){
-           this.slideToNext()
-        }
-        else if(posFinal - this.drag.initialPos > this.treshold){
-            this.slideToPrev()
+        if(this.infinite || this.currentSlide !== 0){
+            if(posFinal - this.drag.initialPos < -this.treshold){
+               this.slideToNext();
+               console.log('forward')
+            }
+            else if(posFinal - this.drag.initialPos > this.treshold){
+                this.slideToPrev();
+                console.log('back')
+            }
+            else{
+               this.slideTo(this.currentSlide)
+            }
         }
         else{
-           this.slideTo(this.currentSlide)
-        }
+            this.slideTo(this.currentSlide)
+         }
 
         document.onmouseup = null;
         document.onmousemove = null;
