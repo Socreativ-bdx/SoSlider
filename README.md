@@ -3,6 +3,7 @@
 # README #
 
 Sõcreativ' Slider JS.
+(Démo)[https://valmgr.github.io/SoSlider/demo.html]
 
 ### Information ###
 

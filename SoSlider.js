@@ -85,7 +85,7 @@ class SoSlider {
         this.slides.forEach((s, i) => {
             if (i === 0) s.classList.add('active');
             s.classList.add('SoSlider__slide');
-            s.style.width = this.width - margin*2 + 'px';
+            s.style.width = this.width - margin * 2 + 'px';
             this.track.append(s);
         });
     }
@@ -150,14 +150,15 @@ class SoSlider {
         this.slides[i].classList.add('active');
         if (this.dots) {
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
-            this.dotsElement[i].classList.add('active');
+            this.dotsElement[i / this.slideToScroll].classList.add('active');
         }
     }
 
     slideToNext() {
         this.isSliding = true;
         if (this.currentSlide < (this.slides.length - 1)) {
-            this.currentSlide++;
+            this.currentSlide += this.slideToScroll;
+            if (this.slides[this.currentSlide] === undefined) this.currentSlide = 0;
         }
         else if (this.infinite) {
             this.currentSlide = 0;
@@ -174,7 +175,8 @@ class SoSlider {
     slideToPrev() {
         this.isSliding = true;
         if (this.currentSlide > 0) {
-            this.currentSlide--;
+            this.currentSlide -= this.slideToScroll;
+            if (this.slides[this.currentSlide] === undefined) this.currentSlide = this.slide.length - 1;
         }
         else if (this.infinite) {
             this.currentSlide = this.slides.length - 1;
@@ -274,14 +276,15 @@ class SoSlider {
         this.dotsElement = [];
         const dotParent = document.createElement('div');
         dotParent.classList.add('SoSlider__dots');
-        this.slides.forEach((s, i) => {
+        const pages = this.slides.length / this.slideToScroll;
+        for(let i=0;i<pages;i++){
             let dot = document.createElement('button');
             dot.classList.add('SoSlider__dot')
             if (this.dotsClass !== null) dot.classList.add(this.dotsClass);
             if (i === 0) dot.classList.add('active');
             dotParent.append(dot);
             this.dotsElement.push(dot);
-        });
+        };
         if (this.appendDots) {
             this.appendDots.append(dotParent);
             this.appendDots.style.setProperty('--dotsColor', this.dotsColor);
