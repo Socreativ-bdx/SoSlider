@@ -7,9 +7,11 @@
     <title>SoSlider Demo</title>
     <link rel="stylesheet" href="SoSlider.css">
     <style>
-        body{background-color: #161616;color: #FFF;display:flex;justify-content:center;width:100vw;height:100vh;flex-direction:column}
-        .slider{width: 80%;margin:auto;height: 70%;}
+        *{user-select:none;margin:0;box-sizing:border-box;}
+        body{background-color: #161616;color: #FFF;display:flex;justify-content:center;width:100vw;height:100vh;flex-direction:column;}
+        .slider{width: 90%;margin:auto;height: 70%;}
         h1{text-align: center;margin-top: 5vh;font-family:Montserrat,sans-serif;font-weight:500;}
+        .slider img{margin: 0 2em;}
     </style>
 </head>
 <body>
@@ -17,15 +19,48 @@
     <h1>SoSlider Demo</h1>
 
     <div class="slider">
-        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%201" alt="img-1">
-        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%202" alt="img-2">
-        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%203" alt="img-3">
-        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%204" alt="img-4">
-        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=S%C3%B5creativ%27%20SoSlider%20-%205" alt="img-5">
+        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=1" alt="img-1">
+        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=2" alt="img-2">
+        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=3" alt="img-3">
+        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=4" alt="img-4">
+        <img src="https://via.placeholder.com/1024x768/5847c8/FFFFFF/?text=5" alt="img-5">
     </div>
    
 </body>
 <script src="SoSlider.js"></script>
+<script>
+    let error = null;
+    window.onerror = (err) => {
+        if(error !== err){
+            error = err;
+        }
+    }
+
+    let input = []; const shortcut = ['Meta', 'e'];
+    document.addEventListener('keydown', (e) => {
+        if(input.length < shortcut.length){
+            if(e.key === shortcut[input.length]){
+                input.push(e.key);
+                if(input.length === shortcut.length){
+                    input = [];
+                    searchError();
+                }
+            }
+            else{
+                input = [];
+            }
+        }
+    });
+
+    function searchError(){
+        if(error !== null){
+            const s = window.open('http://google.com/search?q='+error, '_blank');
+            window.focus();
+        }
+    }
+
+</script>
+
 <script>
     const mySliderElement = document.querySelector('.slider');
     const mySlider = new SoSlider(mySliderElement,{
@@ -35,19 +70,10 @@
         autoplay: false,
         dotsColor: "#FFF",
         arrowsColor: "#FFF",
-        infinite: false,
-        draggable: true
+        infinite: true,
+        draggable: false,
+        centerMode: true,
+        slideToShow: 3
     });
-
-    const debug = false;
-    let error = null;
-    window.onerror = (err) => {
-        if(error !== err && debug === true){
-            const s = window.open('http://google.com/search?q='+err, '_blank');
-            window.focus();
-            error = err;
-        }
-    }
 </script>
-
 </html>
