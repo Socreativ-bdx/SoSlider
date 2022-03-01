@@ -1,7 +1,7 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.3
+ * Version: v1.4
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
@@ -238,11 +238,9 @@ class SoSlider{
         if(this.infinite || this.currentSlide !== 0){
             if(posFinal - this.drag.initialPos < -this.treshold){
                this.slideToNext();
-               console.log('forward')
             }
             else if(posFinal - this.drag.initialPos > this.treshold){
                 this.slideToPrev();
-                console.log('back')
             }
             else{
                this.slideTo(this.currentSlide)
