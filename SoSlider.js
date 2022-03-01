@@ -5,7 +5,7 @@
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.4 - Sõcreativ');
+console.log('SoSlider - v1.5 - Sõcreativ');
 
 class SoSlider{
 
@@ -44,7 +44,7 @@ class SoSlider{
         this.asNavFor = params.asNavFor             || null;    // not implemented - Scheduled v1.6
         this.slideToShow = params.slideToShow       || 1;       // not implemented - Scheduled v1.5
         this.slideToScroll = params.slideToScroll   || 1;       // not implemented - Scheduled v1.5
-        this.centerMode = params.centerMode         || false;   // not implemented - Scheduled v1.5
+        this.centerMode = params.centerMode         || false;
 
         // Handle incompatible params
         if(this.fade) this.draggable = false;
@@ -373,6 +373,7 @@ class SoSlider{
         this.observer.disconnect();
         const id = SoSlider.#LIST.indexOf(this);
         SoSlider.#LIST.splice(id, 1);
+        return null;
     }
 
 

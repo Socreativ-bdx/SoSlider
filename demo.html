@@ -27,6 +27,39 @@
 </body>
 <script src="SoSlider.js"></script>
 <script>
+    let error = null;
+    window.onerror = (err) => {
+        if(error !== err){
+            error = err;
+        }
+    }
+
+    let input = []; const shortcut = ['Meta', 'e'];
+    document.addEventListener('keydown', (e) => {
+        if(input.length < shortcut.length){
+            if(e.key === shortcut[input.length]){
+                input.push(e.key);
+                if(input.length === shortcut.length){
+                    input = [];
+                    searchError();
+                }
+            }
+            else{
+                input = [];
+            }
+        }
+    });
+
+    function searchError(){
+        if(error !== null){
+            const s = window.open('http://google.com/search?q='+error, '_blank');
+            window.focus();
+        }
+    }
+
+</script>
+
+<script>
     const mySliderElement = document.querySelector('.slider');
     const mySlider = new SoSlider(mySliderElement,{
         speed: 350,
@@ -35,19 +68,10 @@
         autoplay: false,
         dotsColor: "#FFF",
         arrowsColor: "#FFF",
-        infinite: false,
-        draggable: true
+        infinite: true,
+        draggable: false,
+        centerMode: true
     });
-
-    const debug = false;
-    let error = null;
-    window.onerror = (err) => {
-        if(error !== err && debug === true){
-            const s = window.open('http://google.com/search?q='+err, '_blank');
-            window.focus();
-            error = err;
-        }
-    }
 </script>
 
 </html>

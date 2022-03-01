@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/Version-v1.4-informational)
+![version](https://img.shields.io/badge/Version-v1.5-informational)
 
 # README #
 
@@ -7,13 +7,13 @@ Sõcreativ' Slider JS.
 ### Information ###
 
 * Work In Progress
-* v1.4
+* v1.5
 
 ### Documentation ###
 
 #### Create basic slider
 ```js
-const myslider = new SoSlider(element, {});
+const myslider = new SoSlider(element, {});
 ```
 
 #### Create slider with options
