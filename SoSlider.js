@@ -150,7 +150,7 @@ class SoSlider {
         this.slides[i].classList.add('active');
         if (this.dots) {
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
-            this.dotsElement[i].classList.add('active');
+            this.dotsElement[i / this.slideToScroll].classList.add('active');
         }
     }
 
