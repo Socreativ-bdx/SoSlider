@@ -1,7 +1,7 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.4
+ * Version: v1.5
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
