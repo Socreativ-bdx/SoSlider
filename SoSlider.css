@@ -24,6 +24,10 @@
     transform: scale(1.1);
 }
 
+.SoSlider__center .SoSlider__slide:not(.active){
+    opacity: .6;
+}
+
 .SoSlider__slide{
     transform-origin: center;
     transition: .35s ease;

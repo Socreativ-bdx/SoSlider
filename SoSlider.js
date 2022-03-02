@@ -109,6 +109,8 @@ class SoSlider {
             copyLast.removeAttribute('data-fancybox');
             copyLast.classList.add('SoSlider__copy');
             this.track.prepend(copyLast);
+
+            if(i === 0 && this.centerMode) this.copy = [copyFirst, copyLast];
         }
     }
 
@@ -153,8 +155,10 @@ class SoSlider {
     }
 
     setClassActive(i) {
-        document.querySelector('.SoSlider__slide.active').classList.remove('active');
+        Array.from(document.querySelectorAll('.SoSlider__slide.active')).forEach(e => e.classList.remove('active'));
         this.slides[i].classList.add('active');
+        if(i === 0 && this.centerMode) this.copy[0].classList.add('active');
+        if(i === this.slides.length - 1) this.copy[1].classList.add('active');
         if (this.dots) {
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
             this.dotsElement[i / this.slideToScroll].classList.add('active');
