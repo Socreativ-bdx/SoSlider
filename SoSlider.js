@@ -45,7 +45,7 @@ class SoSlider {
         this.slideToShow = params.slideToShow || 1;
         this.slideToScroll = params.slideToScroll || 1;
         this.centerMode = params.centerMode || false;
-        this.focusOnSelect = params.focusOnSelect || false;     // not implemented - Scheduled v1.5.0
+        this.focusOnSelect = params.focusOnSelect || false;
 
         // Handle incompatible params
         if (this.centerMode) this.fade = false;
@@ -75,6 +75,7 @@ class SoSlider {
         if (this.autoplay) this.initAutoplay();
         if (this.pauseOnHover && this.autoplay) this.ListenForHover();
         if (this.infinite && !this.fade) this.initInfinite();
+        if (this.centerMode && this.focusOnSelect) this.ListenForFocus();
     }
 
     createTrack() {
@@ -85,7 +86,7 @@ class SoSlider {
         this.track = document.createElement('div');
         this.track.classList.add('SoSlider__track');
         this.frame.append(this.track);
-        this.centerOffset = this.centerMode ? this.frame.clientWidth / 2 - this .width / 2 : 0
+        this.centerOffset = this.centerMode ? this.frame.clientWidth / 2 - this.width / 2 : 0
         this.slides.forEach((s, i) => {
             if (i === 0) {
                 s.classList.add('active');
@@ -98,6 +99,7 @@ class SoSlider {
     }
 
     initInfinite() {
+        this.copy = [];
         for (let i = 0; i < this.slideToShow; i++) {
             const copyFirst = this.slides[i].cloneNode(true);
             copyFirst.removeAttribute('data-fancybox');
@@ -109,8 +111,7 @@ class SoSlider {
             copyLast.removeAttribute('data-fancybox');
             copyLast.classList.add('SoSlider__copy');
             this.track.prepend(copyLast);
-
-            if(i === 0 && this.centerMode) this.copy = [copyFirst, copyLast];
+            this.copy.push(copyFirst, copyLast);
         }
     }
 
@@ -157,8 +158,8 @@ class SoSlider {
     setClassActive(i) {
         Array.from(document.querySelectorAll('.SoSlider__slide.active')).forEach(e => e.classList.remove('active'));
         this.slides[i].classList.add('active');
-        if(i === 0 && this.centerMode) this.copy[0].classList.add('active');
-        if(i === this.slides.length - 1) this.copy[1].classList.add('active');
+        if (i === 0 && this.centerMode) this.copy[0].classList.add('active');
+        if (i === this.slides.length - 1 && this.centerMode) this.copy[1].classList.add('active');
         if (this.dots) {
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
             this.dotsElement[i / this.slideToScroll].classList.add('active');
@@ -223,7 +224,6 @@ class SoSlider {
             }, 100);
         }
     }
-
 
     ListenForDrag() {
         this.drag = { initialPos: 0, posX1: 0, posX2: 0 };
@@ -316,7 +316,7 @@ class SoSlider {
                     this.setAutoplayInstance();
                 }
                 this.currentSlide = i;
-                this.slideTo(this.currentSlide + this.offset);
+                this.slideTo(this.currentSlide);
                 this.setClassActive(this.currentSlide);
             }
         }));
@@ -376,6 +376,35 @@ class SoSlider {
                 }
             }
         });
+    }
+
+    ListenForFocus() {
+        this.slides.forEach((s, i) => s.addEventListener('click', () => {
+            if (!this.isSliding) {
+                this.isSliding = true;
+                if (this.autoplay) {
+                    this.resetInterval();
+                    this.setAutoplayInstance();
+                }
+                this.currentSlide = i;
+                this.slideTo(this.currentSlide);
+                this.setClassActive(this.currentSlide);
+            }
+        }));
+        this.copy.forEach((c, i) => c.addEventListener('click', () => {
+            if (!this.isSliding) {
+                this.isSliding = true;
+                if (this.autoplay) {
+                    this.resetInterval();
+                    this.setAutoplayInstance();
+                }
+                this.currentSlide = i%2 === 0 
+                    ? Math.floor(i / 2)
+                    :this.copy.length - 1 - Math.floor(i/2);
+                this.slideTo(this.currentSlide);
+                this.setClassActive(this.currentSlide);
+            }
+        }));
     }
 
     ListenForHover() {
