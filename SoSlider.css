@@ -1,5 +1,4 @@
 .SoSlider{
-    height: 100%;
     width: 100%;
     margin-bottom: 5vh;
     position: relative;
@@ -18,6 +17,16 @@
     position: relative;
     width: 100%;
     height: 100%;
+}
+
+
+.SoSlider__center .active{
+    transform: scale(1.1);
+}
+
+.SoSlider__slide{
+    transform-origin: center;
+    transition: .35s ease;
 }
 
 .SoSlider__track img,
@@ -45,11 +54,11 @@
 }
 
 .SoSlider__leftArrow{
-    left: -5vw;
+    left: -50px;
 }
 
 .SoSlider__rightArrow{
-    right: -5vw;
+    right: -50px;
 }
 
 .SoSlider__dots{
