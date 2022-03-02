@@ -1,11 +1,11 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.5
+ * Version: v1.5.0
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.5 - Sõcreativ');
+console.log('SoSlider - v1.5.0 - Sõcreativ');
 
 class SoSlider {
 
@@ -24,7 +24,7 @@ class SoSlider {
         this.dots = params.dots || false;
         this.ease = params.ease || 'ease-in-out';
         this.arrows = params.arrows || false;
-        this.vertical = params.vertical || false;   // not implemented - Scheduled v1.6
+        this.vertical = params.vertical || false;               // not implemented - Scheduled v1.6.0
         this.autoplay = params.autoplay || false;
         this.infinite = params.infinite || false;
         this.speed = params.speed || 350;
@@ -41,14 +41,17 @@ class SoSlider {
         this.dotsClass = params.dotsClass || null;
         this.dotsColor = params.dotsColor || '#000';
         this.arrowsColor = params.arrowsColor || '#000';
-        this.asNavFor = params.asNavFor || null;    // not implemented - Scheduled v1.6
+        this.asNavFor = params.asNavFor || null;                // not implemented - Scheduled v1.6.0
         this.slideToShow = params.slideToShow || 1;
-        this.slideToScroll = params.slideToScroll || 1;       // not implemented - Scheduled v1.5
+        this.slideToScroll = params.slideToScroll || 1;
         this.centerMode = params.centerMode || false;
+        this.focusOnSelect = params.focusOnSelect || false;
 
         // Handle incompatible params
+        if (this.centerMode) this.fade = false;
         if (this.fade) this.draggable = false;
         if (this.slideToScroll > this.slideToShow) this.slideToScroll = this.slideToShow;
+        if (this.centerMode) this.slideToScroll = 1;
 
         SoSlider.#LIST.push(this);
         this.initSlider();
@@ -56,9 +59,11 @@ class SoSlider {
 
     initSlider() {
         this.element.classList.add('SoSlider');
+        if (this.centerMode) this.element.classList.add('SoSlider__center');
         this.slides = Array.from(this.element.children);
         this.width = (this.element.clientWidth / this.slideToShow);
         this.offset = this.infinite && !this.fade ? this.slideToShow : 0;
+        if (this.centerMode) this.width -= this.width / 8;
         this.isSliding = false;
         this.trackOffset = 0;
         this.currentSlide = 0;
@@ -70,6 +75,7 @@ class SoSlider {
         if (this.autoplay) this.initAutoplay();
         if (this.pauseOnHover && this.autoplay) this.ListenForHover();
         if (this.infinite && !this.fade) this.initInfinite();
+        if (this.centerMode && this.focusOnSelect) this.ListenForFocus();
     }
 
     createTrack() {
@@ -79,18 +85,21 @@ class SoSlider {
 
         this.track = document.createElement('div');
         this.track.classList.add('SoSlider__track');
-        this.track.style.transform = `translateX(-${this.offset * this.width}px)`;
         this.frame.append(this.track);
-        const margin = getComputedStyle(this.slides[0]).margin.split(" ")[1].match(/\d+/)[0];
+        this.centerOffset = this.centerMode ? this.frame.clientWidth / 2 - this.width / 2 : 0
         this.slides.forEach((s, i) => {
-            if (i === 0) s.classList.add('active');
+            if (i === 0) {
+                s.classList.add('active');
+            }
             s.classList.add('SoSlider__slide');
-            s.style.width = this.width - margin * 2 + 'px';
+            s.style.width = this.width + 'px';
             this.track.append(s);
         });
+        this.track.style.transform = `translateX(-${this.offset * this.width - this.centerOffset}px)`;
     }
 
     initInfinite() {
+        this.copy = [];
         for (let i = 0; i < this.slideToShow; i++) {
             const copyFirst = this.slides[i].cloneNode(true);
             copyFirst.removeAttribute('data-fancybox');
@@ -102,6 +111,7 @@ class SoSlider {
             copyLast.removeAttribute('data-fancybox');
             copyLast.classList.add('SoSlider__copy');
             this.track.prepend(copyLast);
+            this.copy.push(copyFirst, copyLast);
         }
     }
 
@@ -146,8 +156,10 @@ class SoSlider {
     }
 
     setClassActive(i) {
-        document.querySelector('.SoSlider__slide.active').classList.remove('active');
+        Array.from(document.querySelectorAll('.SoSlider__slide.active')).forEach(e => e.classList.remove('active'));
         this.slides[i].classList.add('active');
+        if (i === 0 && this.centerMode) this.copy[0].classList.add('active');
+        if (i === this.slides.length - 1 && this.centerMode) this.copy[1].classList.add('active');
         if (this.dots) {
             document.querySelector('.SoSlider__dot.active').classList.remove('active');
             this.dotsElement[i / this.slideToScroll].classList.add('active');
@@ -192,11 +204,11 @@ class SoSlider {
 
     slideTo(slideToAnim, slideToTranslate = slideToAnim) {
         const a = this.track.animate(
-            [{ transform: `translateX(-${(slideToAnim + this.offset) * this.width}px)` }],
+            [{ transform: `translateX(-${(slideToAnim + this.offset) * this.width - this.centerOffset}px)` }],
             { duration: this.speed, easing: this.ease }
         );
         a.onfinish = () => {
-            this.track.style.transform = `translateX(-${(slideToTranslate + this.offset) * this.width}px)`;
+            this.track.style.transform = `translateX(-${(slideToTranslate + this.offset) * this.width - this.centerOffset}px)`;
             this.trackOffset = -(slideToTranslate + this.offset) * this.width;
             this.isSliding = false;
         };
@@ -213,7 +225,6 @@ class SoSlider {
         }
     }
 
-
     ListenForDrag() {
         this.drag = { initialPos: 0, posX1: 0, posX2: 0 };
         this.trackOffset = this.infinite ? -this.width : 0;
@@ -227,12 +238,12 @@ class SoSlider {
         e.preventDefault();
         this.drag.initialPos = this.trackOffset;
         if (e.type == 'touchstart') {
-            this.drag.posX1 = e.touches[0].clientX
+            this.drag.posX1 = e.touches[0].clientX;
         }
         else {
             this.drag.posX1 = e.clientX;
             document.onmouseup = this.DragEnd.bind(this);
-            document.onmousemove = this.Dragging.bind(this)
+            document.onmousemove = this.Dragging.bind(this);
         }
     }
 
@@ -246,11 +257,11 @@ class SoSlider {
                 this.slideToPrev();
             }
             else {
-                this.slideTo(this.currentSlide)
+                this.slideTo(this.currentSlide);
             }
         }
         else {
-            this.slideTo(this.currentSlide)
+            this.slideTo(this.currentSlide);
         }
 
         document.onmouseup = null;
@@ -268,7 +279,7 @@ class SoSlider {
         }
         let newPos = this.trackOffset - this.drag.posX2;
 
-        this.track.style.transform = `translateX(${newPos}px)`
+        this.track.style.transform = `translateX(${newPos}px)`;
         this.trackOffset = newPos;
     }
 
@@ -277,9 +288,9 @@ class SoSlider {
         const dotParent = document.createElement('div');
         dotParent.classList.add('SoSlider__dots');
         const pages = this.slides.length / this.slideToScroll;
-        for(let i=0;i<pages;i++){
+        for (let i = 0; i < pages; i++) {
             let dot = document.createElement('button');
-            dot.classList.add('SoSlider__dot')
+            dot.classList.add('SoSlider__dot');
             if (this.dotsClass !== null) dot.classList.add(this.dotsClass);
             if (i === 0) dot.classList.add('active');
             dotParent.append(dot);
@@ -290,7 +301,7 @@ class SoSlider {
             this.appendDots.style.setProperty('--dotsColor', this.dotsColor);
         }
         else {
-            this.element.append(dotParent)
+            this.element.append(dotParent);
             this.element.style.setProperty('--dotsColor', this.dotsColor);
         }
         this.ListenForDots();
@@ -305,7 +316,7 @@ class SoSlider {
                     this.setAutoplayInstance();
                 }
                 this.currentSlide = i;
-                this.slideTo(this.currentSlide + this.offset);
+                this.slideTo(this.currentSlide);
                 this.setClassActive(this.currentSlide);
             }
         }));
@@ -318,7 +329,7 @@ class SoSlider {
             this.leftArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_left_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M30.83 32.67l-9.17-9.17 9.17-9.17L28 11.5l-12 12 12 12z"></path></g></svg>';
         }
         else {
-            this.leftArrow = this.prevArrow
+            this.leftArrow = this.prevArrow;
         }
         if (this.arrowsClass !== null) this.leftArrow.classList.add(this.arrowsClass);
 
@@ -329,7 +340,7 @@ class SoSlider {
             this.rightArrow.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><title>ic_keyboard_arrow_right_48px</title><g fill="#000000" class="nc-icon-wrapper"><path d="M17.17 32.92l9.17-9.17-9.17-9.17L20 11.75l12 12-12 12z"></path></g></svg>';
         }
         else {
-            this.rightArrow = this.nextArrow
+            this.rightArrow = this.nextArrow;
         }
         if (this.arrowsClass !== null) this.rightArrow.classList.add(this.arrowsClass);
 
@@ -352,7 +363,7 @@ class SoSlider {
                 this.slideToPrev();
                 if (this.autoplay) {
                     this.resetInterval();
-                    this.setAutoplayInstance()
+                    this.setAutoplayInstance();
                 }
             }
         });
@@ -361,10 +372,39 @@ class SoSlider {
                 this.slideToNext();
                 if (this.autoplay) {
                     this.resetInterval();
-                    this.setAutoplayInstance()
+                    this.setAutoplayInstance();
                 }
             }
         });
+    }
+
+    ListenForFocus() {
+        this.slides.forEach((s, i) => s.addEventListener('click', () => {
+            if (!this.isSliding) {
+                this.isSliding = true;
+                if (this.autoplay) {
+                    this.resetInterval();
+                    this.setAutoplayInstance();
+                }
+                this.currentSlide = i;
+                this.slideTo(this.currentSlide);
+                this.setClassActive(this.currentSlide);
+            }
+        }));
+        this.copy.forEach((c, i) => c.addEventListener('click', () => {
+            if (!this.isSliding) {
+                this.isSliding = true;
+                if (this.autoplay) {
+                    this.resetInterval();
+                    this.setAutoplayInstance();
+                }
+                this.currentSlide = i%2 === 0 
+                    ? Math.floor(i / 2)
+                    :this.copy.length - 1 - Math.floor(i/2);
+                this.slideTo(this.currentSlide);
+                this.setClassActive(this.currentSlide);
+            }
+        }));
     }
 
     ListenForHover() {
