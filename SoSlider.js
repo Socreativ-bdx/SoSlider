@@ -412,12 +412,23 @@ class SoSlider {
         this.element.addEventListener('mouseleave', () => this.setAutoplayInstance());
     }
 
+    // Public functions
+
     kill() {
         clearInterval(this.autoPlayInstance);
         this.observer.disconnect();
         const id = SoSlider.#LIST.indexOf(this);
         SoSlider.#LIST.splice(id, 1);
         return null;
+    }
+
+    slideGoTo(index = 0){
+        this.currentSlide = index;
+        this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+    }
+
+    getCurrentSlide(){
+        return this.slide[this.currentSlide];
     }
 
 
