@@ -1,11 +1,11 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.5.1
+ * Version: v1.5.2
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.5.0 - Sõcreativ');
+console.log('SoSlider - v1.5.2 - Sõcreativ');
 
 class SoSlider {
 
@@ -309,16 +309,7 @@ class SoSlider {
 
     ListenForDots() {
         this.dotsElement.forEach((dot, i) => dot.addEventListener('click', () => {
-            if (!this.isSliding) {
-                this.isSliding = true;
-                if (this.autoplay) {
-                    this.resetInterval();
-                    this.setAutoplayInstance();
-                }
-                this.currentSlide = i;
-                this.slideTo(this.currentSlide);
-                this.setClassActive(this.currentSlide);
-            }
+            this.slideGoTo(i);
         }));
     }
 
@@ -423,9 +414,16 @@ class SoSlider {
     }
 
     slideGoTo(index = 0){
-        this.currentSlide = index;
-        this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
-        this.setClassActive(this.currentSlide);
+        if (!this.isSliding) {
+            this.isSliding = true;
+            if (this.autoplay) {
+                this.resetInterval();
+                this.setAutoplayInstance();
+            }
+            this.currentSlide = index;
+            this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+            this.setClassActive(this.currentSlide);
+        }
     }
 
     getCurrentSlide(){

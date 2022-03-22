@@ -78,17 +78,12 @@
 <script>
     const mySliderElement = document.querySelector('.slider');
     const mySlider = new SoSlider(mySliderElement,{
-        speed: 350,
         dots: true,
-        arrows: true,
+        dotsColor: '#FFF',
+        arrows: false,
         autoplay: false,
-        dotsColor: "#FFF",
-        arrowsColor: "#FFF",
-        infinite: true,
-        draggable: false,
-        centerMode: true,
-        slideToShow: 3,
-        focusOnSelect: true
+        infinite: false,
+        fade: true
     });
 </script>
 </html>
