@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/Version-v1.5.1-informational)
+![version](https://img.shields.io/badge/Version-v1.5.2-informational)
 
 # README #
 
