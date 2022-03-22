@@ -5,7 +5,7 @@
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.5.0 - Sõcreativ');
+console.log('SoSlider - v1.5.1 - Sõcreativ');
 
 class SoSlider {
 
@@ -309,16 +309,7 @@ class SoSlider {
 
     ListenForDots() {
         this.dotsElement.forEach((dot, i) => dot.addEventListener('click', () => {
-            if (!this.isSliding) {
-                this.isSliding = true;
-                if (this.autoplay) {
-                    this.resetInterval();
-                    this.setAutoplayInstance();
-                }
-                this.currentSlide = i;
-                this.slideTo(this.currentSlide);
-                this.setClassActive(this.currentSlide);
-            }
+            this.slideGoTo(i);
         }));
     }
 
@@ -398,9 +389,9 @@ class SoSlider {
                     this.resetInterval();
                     this.setAutoplayInstance();
                 }
-                this.currentSlide = i%2 === 0 
+                this.currentSlide = i % 2 === 0
                     ? Math.floor(i / 2)
-                    :this.copy.length - 1 - Math.floor(i/2);
+                    : this.copy.length - 1 - Math.floor(i / 2);
                 this.slideTo(this.currentSlide);
                 this.setClassActive(this.currentSlide);
             }
@@ -422,13 +413,20 @@ class SoSlider {
         return null;
     }
 
-    slideGoTo(index = 0){
-        this.currentSlide = index;
-        this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
-        this.setClassActive(this.currentSlide);
+    slideGoTo(index = 0) {
+        if (!this.isSliding) {
+            this.isSliding = true;
+            if (this.autoplay) {
+                this.resetInterval();
+                this.setAutoplayInstance();
+            }
+            this.currentSlide = index;
+            this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+            this.setClassActive(this.currentSlide);
+        }
     }
 
-    getCurrentSlide(){
+    getCurrentSlide() {
         return this.slide[this.currentSlide];
     }
 
