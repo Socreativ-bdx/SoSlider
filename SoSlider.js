@@ -1,11 +1,11 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.5.2
+ * Version: v1.5.1
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
-console.log('SoSlider - v1.5.2 - Sõcreativ');
+console.log('SoSlider - v1.5.1 - Sõcreativ');
 
 class SoSlider {
 
@@ -389,9 +389,9 @@ class SoSlider {
                     this.resetInterval();
                     this.setAutoplayInstance();
                 }
-                this.currentSlide = i%2 === 0 
+                this.currentSlide = i % 2 === 0
                     ? Math.floor(i / 2)
-                    :this.copy.length - 1 - Math.floor(i/2);
+                    : this.copy.length - 1 - Math.floor(i / 2);
                 this.slideTo(this.currentSlide);
                 this.setClassActive(this.currentSlide);
             }
@@ -413,7 +413,7 @@ class SoSlider {
         return null;
     }
 
-    slideGoTo(index = 0){
+    slideGoTo(index = 0) {
         if (!this.isSliding) {
             this.isSliding = true;
             if (this.autoplay) {
@@ -426,7 +426,7 @@ class SoSlider {
         }
     }
 
-    getCurrentSlide(){
+    getCurrentSlide() {
         return this.slide[this.currentSlide];
     }
 

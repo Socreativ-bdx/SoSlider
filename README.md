@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/Version-v1.5.2-informational)
+![version](https://img.shields.io/badge/Version-v1.5.1-informational)
 
 # README #
 
@@ -9,7 +9,7 @@ Sõcreativ' Slider JS.
 ### Information ###
 
 * Work In Progress
-* v1.5.2
+* v1.5.1
 
 ### Documentation ###
 
