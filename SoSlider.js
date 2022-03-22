@@ -1,7 +1,7 @@
 /**
  * SoSlider
  * Author: Sõcreativ'
- * Version: v1.5.0
+ * Version: v1.5.1
  * Link: https://bitbucket.org/socreativ/soslider/src/master/
  */
 "use-strict";
@@ -425,6 +425,7 @@ class SoSlider {
     slideGoTo(index = 0){
         this.currentSlide = index;
         this.fade ? this.fadeTo(this.currentSlide) : this.slideTo(this.currentSlide);
+        this.setClassActive(this.currentSlide);
     }
 
     getCurrentSlide(){
